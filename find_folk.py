@@ -9,19 +9,38 @@ conn = pymysql.connect(host='localhost',
                        db='find_folk',
                        charset='utf8mb4',
                        cursorclass=pymysql.cursors.DictCursor)
-@app.route('/')
-def hello():
-    return 'Hello World'
 
+#Default route that will redirect to main page
+@app.route('/')
+def toMain():
+    return redirect('/main')
+
+#Display all event in the next 3 days
+#and see group's interest
+@app.route('/main')
+def main():
+    cursor = conn.cursor()
+    query = 'SELECT start_time, title FROM an_event WHERE (DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 1 DAY) OR DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 2 DAY) OR DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 3 DAY)) ORDER BY start_time'
+    cursor.execute(query)
+    data = cursor.fetchall()
+    cursor.close()
+    return render_template('main.html', events=data)
+
+#Display user's homepage
 @app.route('/home')
 def home():
     username = session['username']
     cursor = conn.cursor()
-    query = 'SELECT ts, blog_post FROM blog WHERE username = %s ORDER BY ts DESC'
+    query = 'SELECT an_event.event_id, title, start_time, location_name, zipcode, group_name '\
+            'FROM an_event '\
+            'JOIN sign_up ON sign_up.event_id = an_event.event_id '\
+            'JOIN (organize JOIN a_group ON organize.group_id = a_group.group_id) ON organize.event_id = an_event.event_id '\
+            'WHERE username = %s AND(DATE(start_time) = CURDATE() OR DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 1 DAY) OR DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 2 DAY) OR DATE(start_time) = DATE_ADD(CURDATE(), INTERVAL 3 DAY)) '\
+            'ORDER BY start_time'
     cursor.execute(query, (username))
     data = cursor.fetchall()
     cursor.close()
-    return render_template('index.html', username=username, posts=data)
+    return render_template('home.html', username=username, events=data)
 
 @app.route('/login')
 def login():
@@ -34,7 +53,7 @@ def loginAuth():
 
     cursor = conn.cursor()
 
-    query = 'SELECT * FROM users WHERE username = %s AND pw = (SELECT MD5(%s))'
+    query = 'SELECT * FROM member WHERE username = %s AND password = (SELECT MD5(%s))'
     cursor.execute(query, (username, password))
 
     data = cursor.fetchone()

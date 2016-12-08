@@ -1,0 +1,22 @@
+<h1>Hello Guest User</h1>
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<p> Here are the upcoming events: </p>
+<table>
+	<th> Date/Time </th>
+	<th> Event </th>
+	
+{% for line in events %}
+	<tr>
+		<td>{{line.start_time}}</td>
+		<td>{{line.title}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/login">Login</a>
+<a href="/register">Register</a>

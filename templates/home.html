@@ -1,0 +1,33 @@
+<h1>Welcome {{username}}</h1>
+
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<p>Your Upcoming Event:</p>
+
+<table>
+	<tr>
+		<th>EventID</th>
+		<th>Title</th>
+		<th>Start Time</th>
+		<th>Location</th>
+		<th>Zipcode</th>
+		<th>Sponsoring Group</th>
+	</tr>
+	
+{% for line in events %}
+	<tr>
+		<td>{{line.event_id}}</td>
+		<td>{{line.title}}</td>
+		<td>{{line.start_time}}</td>
+		<td>{{line.location_name}}</td>
+		<td>{{line.zipcode}}</td>
+		<td>{{line.group_name}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/logout">Logout</a>
