@@ -1,0 +1,17 @@
+<form action="/createAuth" method="POST">
+	<input type="text" name="title" placeholder="title" required/> </br>
+	<input type="text" name="description" placeholder="description" required/> </br>
+	<input type="datetime-local" name="start_time" required/> </br>
+	<input type="datetime-local" name="end_time" required/> </br>
+	<input type="text" name="location_name" placeholder="location_name" required/> </br>
+	<input type="text" name="zipcode" placeholder="zipcode" required/> </br>
+	<select name="group_id">
+	{% for i in groups %}
+		<option value={{i.group_id}}>{{i.group_name}}</option>
+	{% endfor %}
+	</select>
+	<input type="submit" value= Create />
+	{% if error %}
+		<p class="error"><strong>Error:</strong> {{error}}</p>
+	{% endif %}
+</form>

@@ -1,0 +1,41 @@
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<p>These are the events from groups that share interests with you:</p>
+
+<table>
+	<tr>
+		<th>EventID</th>
+		<th>Title</th>
+		<th>Start Time</th>
+		<th>Location</th>
+		<th>Zipcode</th>
+		<th>Sponsoring Group</th>
+		<th>Sign up</th>
+	</tr>
+	
+{% for line in events %}
+	<tr>
+		<td>{{line.event_id}}</td>
+		<td>{{line.title}}</td>
+		<td>{{line.start_time}}</td>
+		<td>{{line.location_name}}</td>
+		<td>{{line.zipcode}}</td>
+		<td>{{line.group_name}}</td>
+		<td>
+			<form action="/signup" method="POST">
+				<button type="submit" name="submit" value={{line.event_id}}>Sign Up</button>
+			</form>
+		</td>
+	</tr>
+{% endfor %}
+</table>
+
+{% if error %}
+		<p class='error'><strong>Error:</strong> {{error}}</p>
+{% endif %}
+
+<a href="/home">Back</a>

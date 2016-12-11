@@ -30,4 +30,31 @@
 {% endfor %}
 </table>
 
+<p></p>
+<p>Your current interest:</p>
+
+<table>
+	<tr>
+		<th>Category</th>
+		<th>Keyword</th>
+	</tr>
+	
+{% for interest in interests %}
+	<tr>
+		<td>{{interest.category}}</td>
+		<td>{{interest.keyword}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<p></p>
+
+<form action="/search">
+    <input type="submit" value="Search for upcoming event" />
+</form>
+
+<form action="/create">
+    <input type="submit" value="Create a new event" />
+</form>
+
 <a href="/logout">Logout</a>
