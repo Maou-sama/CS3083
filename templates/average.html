@@ -1,0 +1,25 @@
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<p>Here are the average ratings for events of your group:</p>
+
+<table>
+	<tr>
+		<th>Group Name</th>
+		<th>Title</th>
+		<th>Average Rating</th>
+	</tr>
+	
+{% for line in ratings %}
+	<tr>
+		<td>{{line.group_name}}</td>
+		<td>{{line.title}}</td>
+		<td>{{line.average_rating}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/home">Back</a>

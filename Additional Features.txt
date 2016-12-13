@@ -1,0 +1,4 @@
+1.
+Register: This feature allows a guest to register a new account
+2.
+Add Friend: Allow user to add a friend manually provide he/she knows the username

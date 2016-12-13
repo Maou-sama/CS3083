@@ -1,6 +1,10 @@
 <form action="/registerAuth" method="POST">
 	<input type="text" name="username" placeholder="username" required/> </br>
 	<input type="password" name="password" placeholder="password" required/> </br>
+	<input type="text" name="first_name" placeholder="First Name" required/> </br>
+	<input type="text" name="last_name" placeholder="Last Name" required/> </br>
+	<input type="text" name="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$" placeholder="Email" required/> </br>
+	<input type="text" name="zipcode" pattern="[0-9]{5}" placeholder="Zipcode" required/> </br>
 	<input type="submit" value= Register />
 	{% if error %}
 		<p class='error'><strong>Error:</strong> {{error}}</p>

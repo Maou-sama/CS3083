@@ -1,0 +1,10 @@
+<form action="/addfriendAuth" method="POST">
+	<input type="text" name="friend_to" placeholder="Name" required/> </br>
+	<input type="submit" value= Add />
+</form>
+
+{% if error %}
+	<p class="error"><strong>Error:</strong> {{error}}</p>
+{% endif %}
+
+<a href="/home">Back</a>

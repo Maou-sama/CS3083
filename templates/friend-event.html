@@ -1,0 +1,23 @@
+<style type="text/css">
+	table, th, td{
+		border: 1px solid black;
+	}
+</style>
+
+<p>Here are the upcoming events your friends have signed up for:</p>
+
+<table>
+	<tr>
+		<th>Title</th>
+		<th>Friend</th>
+	</tr>
+	
+{% for line in events %}
+	<tr>
+		<td>{{line.title}}</td>
+		<td>{{line.friend_to}}</td>
+	</tr>
+{% endfor %}
+</table>
+
+<a href="/home">Back</a>

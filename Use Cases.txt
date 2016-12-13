@@ -1,0 +1,164 @@
+List of all use cases:
+1. 
+View Publiv Info: Guests can see events that are going to take place during the coming 3 days
+
+Query Uses: 
+SELECT start_time, title
+FROM an_event
+WHERE start_time < DATE_ADD(CURDATE(), INTERVAL 3 DAY) AND start_time > NOW()
+ORDER BY start_time
+
+This query get the start time and name of event with start time later than now and earlier than current date + 3 and ordered by start time
+
+2.
+Login: Let the user logs in
+
+Query Uses:
+SELECT *
+FROM member
+WHERE username = %s AND password = (SELECT MD5(%s))
+
+This query get row from member with the same username and password as passed in by user. Password is encrypted with md5
+
+3.
+View my upcoming events: User can see upcoming events (occur in the next 3 days) that he/she signed up
+
+Query Uses:
+SELECT an_event.event_id, title, start_time, location_name, zipcode, group_name
+FROM an_event
+JOIN sign_up ON sign_up.event_id = an_event.event_id
+JOIN (organize JOIN a_group ON organize.group_id = a_group.group_id) ON organize.event_id = an_event.event_id
+WHERE username = %s AND start_time < DATE_ADD(CURDATE(), INTERVAL 3 DAY) AND start_time > NOW()
+ORDER BY start_time
+
+This query get the event id, title, ... and group name from a combined tables of an_event,
+sign_up, organize and a_group with start time later than now and earlier than current date + 3
+for this current user. The table is ordered by start time
+
+4.
+Sign up for an event: Let user sign up for an event. This is only avaiable when user search for events of interest
+
+Query Uses:
+SELECT * FROM sign_up WHERE username = %s AND event_id = %s
+INSERT INTO sign_up (event_id, username) VALUES (%s, %s)
+
+Check whether user and event id are already in sign_up table
+If not the next query is used to insert those into the table
+
+5.
+Search for events of interest: Search upcoming events from groups that share same interest as user
+
+Query Uses:
+SELECT an_event.event_id, title, start_time, location_name, zipcode, group_name
+FROM about
+JOIN (organize JOIN an_event ON organize.event_id = an_event.event_id) ON organize.group_id = about.group_id
+JOIN interested_in ON about.category = interested_in.category AND about.keyword = interested_in.keyword
+JOIN a_group ON about.group_id = a_group.group_id
+WHERE username = %s AND start_time < DATE_ADD(CURDATE(), INTERVAL 3 DAY) AND start_time > NOW()
+ORDER BY start_time
+
+Get the event infos and group name from a combined tables of about, organize, an_event,
+interested_in and a_group with start time later than now and earlier than current date + 3
+for current user. The table is ordered by start time
+
+6.
+Create an event: Let user create events for groups that he/she is authorized to do so
+
+Query Uses:
+SELECT belongs_to.group_id, group_name
+FROM belongs_to JOIN a_group ON belongs_to.group_id = a_group.group_id 
+WHERE authorized = 1 AND username = %s
+
+This query get the group that user is allowed to create event for. This is shown as a drop down in html file
+
+SELECT * 
+FROM an_event 
+WHERE title = %s AND description = %s AND start_time = %s AND end_time = %s AND location_name = %s AND zipcode = %s
+
+This query check if there is already the same event (same name with same start time,...)
+
+INSERT INTO an_event VALUES (NULL, %s, %s, %s, %s, %s, %s)
+
+This query insert into an_event table the event information
+
+INSERT INTO organize VALUES((SELECT event_id FROM an_event WHERE title = %s AND description = %s AND start_time = %s AND end_time = %s AND location_name = %s AND zipcode = %s LIMIT 1), %s)
+
+This query insert into organize table the event id with respective group id
+
+7.
+Rate an event: rate event that user signed up for and already taken place
+
+Query Uses:
+SELECT sign_up.event_id, title
+FROM sign_up JOIN an_event ON sign_up.event_id = an_event.event_id
+WHERE username = %s AND end_time < NOW()
+
+This query get the event id and title which the user sign up for and end time is earlier than now(already ended)
+
+SELECT *
+FROM sign_up JOIN an_event ON sign_up.event_id = an_event.event_id
+WHERE sign_up.event_id = %s AND username = %s AND end_time < NOW()
+
+Check whether this user already sign up for this event and end time is earlier than now
+
+UPDATE sign_up SET rating = %s WHERE username = %s AND event_id = %s
+
+Update the rating in sign_up table
+
+8.
+See averate ratings: see the average ratings of all events sponsored by groups this user belongs to
+
+Query Uses:
+SELECT AVG(rating) AS average_rating, group_name, title
+FROM belongs_to
+JOIN a_group ON belongs_to.group_id = a_group.group_id
+JOIN (organize JOIN (an_event JOIN sign_up ON an_event.event_id = sign_up.event_id) ON organize.event_id = an_event.event_id) ON belongs_to.group_id = organize.group_id
+WHERE belongs_to.username = %s AND end_time >= DATE_ADD(CURDATE(), INTERVAL -3 DAY) AND end_time <= NOW()
+GROUP BY title
+
+This query get the average rate group name and title from a combined table of belongs_to, a_group,
+organize, an_event and sign_up with end time later than 3 days ago but earlier than now(last 3 days)
+of the current user. This table is grouped by title
+
+9.
+See friends' events: Display upcoming events of user's friends
+
+Query Uses:
+SELECT title, friend_to
+FROM sign_up
+JOIN friend ON sign_up.username = friend.friend_to
+JOIN an_event ON sign_up.event_id = an_event.event_id
+WHERE friend_of = %s AND start_time < DATE_ADD(CURDATE(), INTERVAL 3 DAY) AND start_time > NOW()
+
+This query get the event's title and the username of the friend
+from a combined table of sign_up, friend and an_event
+with start time in the next 3 days of the current user
+
+10.
+Logout: logout and destroy session
+
+No query needed
+
+11.
+Register: register a new user to the database
+
+Query Uses:
+SELECT * FROM member WHERE username = %s
+
+Check if there is this username in member
+
+INSERT INTO member VALUES(%s, (SELECT MD5(%s)), %s, %s, %s, %s)s
+
+Insert into the table the required info with password encrypted by md5
+
+12.
+Add friend: allow the user add a new friend
+
+Query Uses:
+SELECT * FROM friend WHERE friend_of = %s AND friend_to = %s
+
+Check if already friend
+
+INSERT INTO friend VALUES (%s, %s)
+
+Insert into the table the information

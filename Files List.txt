@@ -1,0 +1,13 @@
+List of all files:
+1. find_folk.py:  python source code to execute all the queries that interact between the html and database
+2. templates/average.html: Page that displays the average rating of all events of groups user belongs to
+3. templates/create.html: Page that displays the form to create a new event
+4. templates/friend-event.html: Page that displays the upcoming events of user's friends
+5. templates/home.html: Page that displays the home page for current user
+6. templates/login.html: Page that displays the login form
+7. templates/main.html: Page that displays main page when no user is logged in
+8. templates/rate.html: Page that displays the rating form for events
+9. templates/register.html: Page that displays the register form
+10. templates/search.html: Page that displays the upcoming events of groups that share same interest as user
+11. templates/signup.html: Page that displays whether sign up for events success or error
+12. templates/addfriend.html: Page that displays addfriend form
